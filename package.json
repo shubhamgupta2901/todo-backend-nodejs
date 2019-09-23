@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-task-app",
+  "version": "1.0.0",
+  "description": "Task application written in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shubhamgupta2901/nodejs-task-app.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Shubham Gupta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shubhamgupta2901/nodejs-task-app/issues"
+  },
+  "homepage": "https://github.com/shubhamgupta2901/nodejs-task-app#readme"
+}
