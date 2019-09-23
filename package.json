@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/shubhamgupta2901/nodejs-task-app/issues"
   },
-  "homepage": "https://github.com/shubhamgupta2901/nodejs-task-app#readme"
+  "homepage": "https://github.com/shubhamgupta2901/nodejs-task-app#readme",
+  "dependencies": {
+    "mongodb": "^3.3.2"
+  }
 }
