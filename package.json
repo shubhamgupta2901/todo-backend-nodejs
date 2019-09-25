@@ -21,6 +21,7 @@
   "homepage": "https://github.com/shubhamgupta2901/nodejs-task-app#readme",
   "dependencies": {
     "mongodb": "^3.3.2",
-    "mongoose": "^5.7.1"
+    "mongoose": "^5.7.1",
+    "validator": "^11.1.0"
   }
 }
