@@ -27,6 +27,17 @@ app.post('/tasks',(req,res)=>{
 })
 
 
+app.get('/users', (req,res)=>{
+    User.find({})
+    .then(queryResult=> res.send(queryResult))
+    .catch(error=> {res.status(500).send(error)})
+})
+
+app.get('/tasks', (req, res)=>{
+    Task.find({})
+    .then(queryResult=> res.send(queryResult))
+    .catch(error=>res.status(400).send(error));
+})
 
 app.listen(port,()=>{
     console.log(`Server is up and running on port ${port}`);
