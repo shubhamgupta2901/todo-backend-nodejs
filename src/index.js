@@ -1,10 +1,20 @@
 const express = require('express');
+require('./db/mongoose'); // By using require, we ensure that the file db/mongoose.js runs which will ensure that mongoose connects to database.
+
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.post('/',(req,res)=>{
-    res.send({'message': 'connected'});
+//When we set up this line, node will automatically parse the 
+//incoming json to an object so we can access it in our request
+app.use(express.json());
+
+app.post('/users',(req,res)=>{
+    console.log(req.body);
+    res.send(req.body);
 })
+
+
 app.listen(port,()=>{
     console.log(`Server is up and running on port ${port}`);
 })
