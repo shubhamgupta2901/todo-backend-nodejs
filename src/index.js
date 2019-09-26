@@ -1,6 +1,6 @@
 const express = require('express');
 require('./db/mongoose'); // By using require, we ensure that the file db/mongoose.js runs which will ensure that mongoose connects to database.
-
+const User = require('./models/user');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,8 +10,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.post('/users',(req,res)=>{
-    console.log(req.body);
-    res.send(req.body);
+    const user = new User(req.body);
+    user.save()
+    .then(response => res.send(user))
+    .catch(error => {
+        res.status(400).send(error.message);
+    })
 })
 
 
