@@ -31,7 +31,6 @@ app.get('/users',async (request, response)=>{
     }
 })
 
-
 app.get('/users/:id', async (request, response)=> {
     const _id = request.params.id;
     try {
@@ -42,6 +41,28 @@ app.get('/users/:id', async (request, response)=> {
         response.status(200).send(user);
     } catch (error) {
         response.status(500).send({error: error.message});
+    }
+})
+
+app.patch('/users/:id',async (request, response)=>{
+    const allowedUpdateFields = ['name', 'email', 'password', 'age'];
+    const requestedUpdateFields = Object.keys(request.body);
+
+    requestedUpdateFields.forEach(field => {
+        if(!allowedUpdateFields.includes(field))
+            response.status(400).send({error: `Either Users do not have ${field} field or it can not be updated`});
+    })
+
+    const _id = request.params.id;
+    try {
+        const user = await User.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        if(!user){
+            return response.status(404).send({error: 'User does not exist'})
+        }
+
+        response.status(200).send(user);
+    } catch (error) {
+        response.status(400).send({error: error.message});
     }
 })
 
@@ -75,6 +96,27 @@ app.get('/tasks/:id',async (request, response)=>{
         response.status(200).send(task);
     } catch (error) {
         response.status(400).send({error: error.message});
+    }
+})
+
+app.patch('/tasks/:id',async (request, response)=> {
+    const _id = request.params.id;
+    const allowedUpdateFields = ['description','completed'];
+    const requestedUpdateFields = Object.keys(request.body);
+
+    requestedUpdateFields.forEach(field => {
+        if(!allowedUpdateFields.includes(field)){
+            return response.status(400).send({error: `Either Tasks does not have ${field} field or it can not be updated.`});
+        }
+    });
+    try {
+        const task = await Task.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        if(!task){
+            return response.status(404).send({error: 'Task does not exist'});
+        }
+        response.status(200).send(task);
+    } catch (error) {
+        response.status(400).status({error: error.message});
     }
 })
 
