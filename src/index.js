@@ -66,6 +66,19 @@ app.patch('/users/:id',async (request, response)=>{
     }
 })
 
+app.delete('/users/:id', async (request, response)=>{
+    const _id = request.params.id;
+    try {
+        const res = await User.deleteOne({_id});
+        if(res.ok === 0)
+            return response.status(400).send({error: "Could not perform delete."})
+        else if(res.deletedCount === 0)
+            return response.status(400).send({error: `User with id: ${_id} does not exist.`})
+        response.status(200).send(res);
+    } catch (error) {
+        response.status(400).send({error: error.message});
+    }
+})
 
 app.post('/tasks', async (request, response)=>{
     const task = new Task(request.body);
@@ -117,6 +130,19 @@ app.patch('/tasks/:id',async (request, response)=> {
         response.status(200).send(task);
     } catch (error) {
         response.status(400).status({error: error.message});
+    }
+})
+
+app.delete('/tasks/:id', async (request, response) => {
+    const id = request.params.id;
+    try {
+        const deletedUser = await Task.findByIdAndDelete(id);
+        if(!deletedUser){
+            return response.status(404).send({error: `Task with id ${id} does not exist.`});
+        }
+        return response.status(200).send(deletedUser);
+    } catch (error) {
+        response.status(400).send({error: error.message});
     }
 })
 
