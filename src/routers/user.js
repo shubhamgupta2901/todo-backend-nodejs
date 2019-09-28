@@ -46,11 +46,16 @@ router.patch('/users/:id',async (request, response)=>{
 
     const _id = request.params.id;
     try {
-        const user = await User.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        //the findByIdAndUpdate bypasses mongoose and performs operation directly on mongodb database, because of this our middleware for hashing password does not run
+        //const user = await User.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        const user = await User.findById(_id);
         if(!user){
             return response.status(404).send({error: 'User does not exist'})
         }
-
+        requestedUpdateFields.forEach(field => {
+            user[field] = request.body[field];
+        })
+        await user.save();
         response.status(200).send(user);
     } catch (error) {
         response.status(400).send({error: error.message});

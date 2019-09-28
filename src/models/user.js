@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const brcypt = require('bcrypt');
 
-const User = mongoose.model('users',{
+
+let Schema = mongoose.Schema;
+let userSchema = new Schema({
     name: { 
         type: String,
         required: true,
@@ -34,20 +37,25 @@ const User = mongoose.model('users',{
                 throw new Error('Your password can not contain the word password!');
             return true;
         }
+    }   
+})
+
+//can not be an arrow function, because this binding plays an important role
+userSchema.pre('save', async function (next){
+    //this points to the document which is being saved
+    console.log('user pre save middleware')
+    let user = this;
+    if (!user.isModified('password')) {
+        console.log('password is not updated. not hashing');
+        return next();
     }
-});
+    const saltRounds = 8;
+    const hashedPassword = await brcypt.hash(user.password,saltRounds);
+    user.password = hashedPassword;
+    next();
+})
 
+
+const User = mongoose.model('users',userSchema);
 module.exports = User;
-
-/**
- * USE LIKE:
-    const shubham = new User({
-    name: 'ShubhamG',
-    email: 'shubhg@gmail.com',
-    password: 'abc   d',
-    });
-    shubham.save()
-    .then(result=> console.log(result))
-    .catch(error=> console.log(error));
- */
 
