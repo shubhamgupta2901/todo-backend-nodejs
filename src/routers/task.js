@@ -46,10 +46,19 @@ router.patch('/tasks/:id',async (request, response)=> {
         }
     });
     try {
-        const task = await Task.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        // const task = await Task.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
+        // if(!task){
+        //     return response.status(404).send({error: 'Task does not exist'});
+        // }
+        // response.status(200).send(task);
+        const task = await Task.findById(_id);
         if(!task){
             return response.status(404).send({error: 'Task does not exist'});
         }
+        requestedUpdateFields.forEach(field => {
+            task[field] = request.body[field];
+        })
+        await task.save();
         response.status(200).send(task);
     } catch (error) {
         response.status(400).status({error: error.message});
