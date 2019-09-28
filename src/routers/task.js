@@ -45,12 +45,7 @@ router.patch('/tasks/:id',async (request, response)=> {
             return response.status(400).send({error: `Either Tasks does not have ${field} field or it can not be updated.`});
         }
     });
-    try {
-        // const task = await Task.findByIdAndUpdate(_id,request.body,{new: true, runValidators: true});
-        // if(!task){
-        //     return response.status(404).send({error: 'Task does not exist'});
-        // }
-        // response.status(200).send(task);
+    try {   
         const task = await Task.findById(_id);
         if(!task){
             return response.status(404).send({error: 'Task does not exist'});

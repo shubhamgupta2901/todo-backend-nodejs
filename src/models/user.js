@@ -41,12 +41,10 @@ let userSchema = new Schema({
 })
 
 userSchema.statics.findByCredentials = async (email, password) => {
-    console.log(`findByCredentials : ${email} | ${password}`);
     const user = await User.findOne({email});
     if(!user){
         throw new Error(`User with email ${email} does not exist.`);
     }
-    console.log(user);
     const isPasswordMatch = await brcypt.compare(password, user.password);
     if(!isPasswordMatch){
         throw new Error(`Unable to login.`)
