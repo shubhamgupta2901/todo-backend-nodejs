@@ -5,18 +5,26 @@ const router = new express.Router();
 router.post('/users', async (request, response)=> {
     const user = new User(request.body);
     try {
-        const userResponse = await user.save();
-        response.status(201).send(userResponse);
+        const res = await user.save();
+        const token = await user.generateAuthToken();
+        response.status(201).send({token, user});
     } catch (error) {
         response.status(400).send({error : error.message});
     } 
 });
 
+
+/**
+ * Note that while the method findByCredentials() is written as a static function in the schema, and is accessible through the model: User.findByCredentials() 
+ * But for generateAuthToken() we are trying to generate a token for a very specific user, so we set it up on the user instance. 
+ * and is accessible via Model instance i.e. document: user.generateAuthToken()
+ */
 router.post('/users/login', async (request, response)=> {
     const {email, password} = request.body; 
     try {
         const user = await User.findByCredentials(email, password);
-        response.status(200).send(user);
+        const token = await user.generateAuthToken();
+        response.status(200).send({token,user});
     } catch (error) {
         console.log(error);
         response.status(400).send({error: error});

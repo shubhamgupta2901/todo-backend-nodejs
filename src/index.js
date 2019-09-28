@@ -2,8 +2,6 @@ const express = require('express');
 require('./db/mongoose'); // By using require, we ensure that the file db/mongoose.js runs which will ensure that mongoose connects to database.
 const UserRouter = require('./routers/user');
 const TaskRouter = require('./routers/task');
-const AuthRouter = require('./routers/auth');
-
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,9 +12,6 @@ app.use(express.json());
 app.use(UserRouter);
 app.use(TaskRouter);
 
-
 app.listen(port,()=>{
     console.log(`Server is up and running on port ${port}`);
 })
-
-
