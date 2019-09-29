@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const brcypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Task = require('../models/task');
 
 let Schema = mongoose.Schema;
 let userSchema = new Schema({
@@ -124,6 +125,13 @@ userSchema.pre('save', async function (next){
     const saltRounds = 8;
     const hashedPassword = await brcypt.hash(user.password,saltRounds);
     user.password = hashedPassword;
+    next();
+})
+
+userSchema.pre('remove', async function(next){
+    console.log('pre remove middleware');
+    const user = this;
+    await Task.deleteMany({author: user._id})
     next();
 })
 
