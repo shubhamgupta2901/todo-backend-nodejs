@@ -9,12 +9,11 @@ router.post('/users', async (request, response)=> {
     try {
         await user.save();
         const token = await user.generateAuthToken();
-        response.status(201).send({token, user: user.getProfileData()});
+        response.status(201).send({token, user});
     } catch (error) {
         response.status(400).send({error : error.message});
     } 
 });
-
 
 /**
  * Note that while the method findByCredentials() is written as a static function in the schema, and is accessible through the model: User.findByCredentials() 
@@ -26,7 +25,7 @@ router.post('/users/login', async (request, response)=> {
     try {
         const user = await User.findByCredentials(email, password);
         const token = await user.generateAuthToken();
-        response.status(200).send({token,user: user.getProfileData()});
+        response.status(200).send({token,user});
     } catch (error) {
         console.log(error);
         response.status(400).send({error: error});

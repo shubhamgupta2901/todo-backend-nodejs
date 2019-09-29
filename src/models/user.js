@@ -58,9 +58,19 @@ userSchema.methods.generateAuthToken = async function (){
     return token;
 }   
 
-userSchema.methods.getProfileData = function (){
-    const {name, email, age, } = this;
-    return {name,email,age};
+/**
+ * Its important that the method name is toJSON
+ * When we pass an object to response.send() in route handlers, express calls JSON.Stringify() to convert objects to string.
+ * Whenever we provide a toJSON method to an object, its going to get called whenever an object is going to get stringified by JSON.Stringified.
+ * This allows us to manipulate what we want to send by returning an object from toJSON method call.
+ * In our case we want to trim out tokens and password from user instances before sending them.
+ */
+userSchema.methods.toJSON = function (){
+    const user = this;
+    const userObject = user.toObject();
+    delete userObject.password,
+    delete userObject.tokens;
+    return userObject;
 }
 
 /**
