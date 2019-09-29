@@ -9,7 +9,7 @@ router.post('/users', async (request, response)=> {
     try {
         await user.save();
         const token = await user.generateAuthToken();
-        response.status(201).send({token, user});
+        response.status(201).send({token, user: user.getProfileData()});
     } catch (error) {
         response.status(400).send({error : error.message});
     } 
@@ -26,7 +26,7 @@ router.post('/users/login', async (request, response)=> {
     try {
         const user = await User.findByCredentials(email, password);
         const token = await user.generateAuthToken();
-        response.status(200).send({token,user});
+        response.status(200).send({token,user: user.getProfileData()});
     } catch (error) {
         console.log(error);
         response.status(400).send({error: error});

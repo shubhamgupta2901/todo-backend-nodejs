@@ -58,6 +58,11 @@ userSchema.methods.generateAuthToken = async function (){
     return token;
 }   
 
+userSchema.methods.getProfileData = function (){
+    const {name, email, age, } = this;
+    return {name,email,age};
+}
+
 /**
  * statics methods are available on the models also called Model methods.
  * 
