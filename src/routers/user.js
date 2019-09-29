@@ -39,14 +39,11 @@ router.post('/users/login', async (request, response)=> {
  * Now when someone makes a get request to /users, it is first going to run our middleware function, 
  * then when next() is called in the middleware, our route handler will run.
  */
-router.get('/users',auth,async (request, response)=>{
+router.get('/users/me',auth,async (request, response)=>{
     try {
-        const users = await User.find({});
-        const trimmedUsers = users.map(user=> ({
-            name: user.name, 
-            age: user.age
-        }));
-        response.status(200).send(trimmedUsers);
+        const{ name, age, email} = request.user;
+        const loggedInUser = {name, age, email}
+        response.status(200).send(loggedInUser);
     } catch (error) {
         response.status(500).send({error: error.message});
     }
