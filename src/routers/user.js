@@ -1,11 +1,13 @@
 const express = require('express');
 const User = require('../models/user');
+const auth = require('../middleware/auth');
 const router = new express.Router();
+
 
 router.post('/users', async (request, response)=> {
     const user = new User(request.body);
     try {
-        const res = await user.save();
+        await user.save();
         const token = await user.generateAuthToken();
         response.status(201).send({token, user});
     } catch (error) {
@@ -31,10 +33,20 @@ router.post('/users/login', async (request, response)=> {
     }
 })
 
-router.get('/users',async (request, response)=>{
+/** 
+ * To add express middleware to an individual route, we pass it in to the method (get in this case)
+ * before passing in the route handler.
+ * Now when someone makes a get request to /users, it is first going to run our middleware function, 
+ * then when next() is called in the middleware, our route handler will run.
+ */
+router.get('/users',auth,async (request, response)=>{
     try {
         const users = await User.find({});
-        response.status(200).send(users);
+        const trimmedUsers = users.map(user=> ({
+            name: user.name, 
+            age: user.age
+        }));
+        response.status(200).send(trimmedUsers);
     } catch (error) {
         response.status(500).send({error: error.message});
     }
