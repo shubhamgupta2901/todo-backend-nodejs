@@ -75,11 +75,16 @@ router.get('/users/me',auth,async (request, response)=>{
 router.patch('/users/me',auth,async (request, response)=>{
     const allowedUpdateFields = ['name', 'email', 'password', 'age'];
     const requestedUpdateFields = Object.keys(request.body);
+    const isValidOperation = requestedUpdateFields.every(field=> allowedUpdateFields.includes(field));
 
-    requestedUpdateFields.forEach(field => {
-        if(!allowedUpdateFields.includes(field))
-            response.status(400).send({error: `Either Users do not have ${field} field or it can not be updated`});
-    })
+    if(!isValidOperation)
+        return response.status(400).send({error: 'Invalid updates'});
+
+    //BUG: When validating operation this way, even after returning response, the execution of method continues and updates the user.
+    // requestedUpdateFields.forEach(field => {
+    //     if(!allowedUpdateFields.includes(field))
+    //         return response.status(400).send({error: `Either Users do not have ${field} field or it can not be updated`});
+    // })
     try {
         const user = request.user;
         requestedUpdateFields.forEach(field => {
