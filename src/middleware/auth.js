@@ -18,6 +18,7 @@ const auth = async (request , response, next) => {
             throw new Error();
         }
         request.user = user;
+        request.token = authToken;
         next();
     } catch (error) {
         response.status(401).send({error: 'Authentication failed'})

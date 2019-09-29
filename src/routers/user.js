@@ -39,6 +39,31 @@ router.post('/users/login', async (request, response)=> {
  * Now when someone makes a get request to /users, it is first going to run our middleware function, 
  * then when next() is called in the middleware, our route handler will run.
  */
+router.post('/users/logout',auth, async (request, response)=>{
+    try {
+        const user = request.user;
+        const updatedTokens = user.tokens.filter(token => token.token !== request.token);
+        user.tokens = updatedTokens;
+        await user.save();
+        response.status(200).send({'message': 'successfully logged out!'})
+    } catch (error) {
+        response.status(500).send({error: error.message});
+    }
+})
+/**
+ * Logout from all sesions. Wipes out the tokens array in User collection
+ */
+router.post('/users/logoutAll', auth, async (request, response)=> {
+    try {
+        const user = request.user;
+        user.tokens = [];
+        await user.save();
+        response.status(200).send({'message': 'logged out from all sessions'});
+    } catch (error) {
+        response.status(500).send({error: error.message});
+    }
+})
+
 router.get('/users/me',auth,async (request, response)=>{
     try {
         const{ name, age, email} = request.user;
