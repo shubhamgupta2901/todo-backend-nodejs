@@ -51,10 +51,10 @@ let userSchema = new Schema({
 /**
  * Setting up a virtual property on User Model.
  * We would like to access all the tasks created by a user by calling user.tasks
- * The tasks live in a seperate collection, and we are not going to store an array of tasks created by a user in the user collection(like tokens), that will be highly inefficient.
+ * The tasks live in a seperate collection, and we are not going to store an array of tasks created by a user in the user collection(like we did with tokens), that will be highly inefficient.
  * Thats where we need virtual property. A virtual property is not actual data stored in the collection, its a relationship between two entities, in this case between our user and our task.
- * The parameter passed to virtual() below says that user collection would like to have a virtual property called **tasks**. This property can be found on collection represented by **Tasks** model.
- * The association is such: the value of **_id** field of user document is same as the value of **owner** field in task document.
+ * The parameters passed to virtual() below says that user collection would like to have a virtual property called **tasks**. This property can be found on collection represented by **Tasks** model.
+ * The association is such: the value of **_id** field of user document is same as the value of **author** field in task document.
  * 
  * Now we can call user.populate('tasks').execPopulate()
  * This will find all tasks created specifically by this user, and it will store them in a real array on user.tasks property.
@@ -64,7 +64,7 @@ let userSchema = new Schema({
 userSchema.virtual('tasks',{
     ref: 'Tasks',
     localField: '_id',
-    foreignField: 'owner',
+    foreignField: 'author',
 })
 
 /**

@@ -7,8 +7,8 @@ const mongoose = require('mongoose');
  * Consider following code: 
  *    const task = await Task.findbyId(_id);
  *    await task.populate('author').execPopulate();
- * populate() enables us to take author and convert from being the _id of owner to being the entire profile of that author.
- * This is just syntatical sugar provided by Mongoose which is under the hood finds the author by _id, fetches the document and replaces the value of author key from _id to the user document 
+ * populate() enables us to take author and convert from being the _id of author to being the entire profile of that author.
+ * This is just syntatical sugar provided by Mongoose which under the hood finds the author by _id, fetches the document and replaces the value of author key from _id to the user document 
  */
 const Task = mongoose.model('tasks',{
     description: {
