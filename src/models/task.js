@@ -30,7 +30,8 @@ let taskSchema = new Schema({
     }
 },{
     timestamps: true 
-})
+});
+taskSchema.index({description: 'text'});
 
 const Task = mongoose.model('tasks',taskSchema)
 module.exports = Task;

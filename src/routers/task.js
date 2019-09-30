@@ -17,9 +17,32 @@ router.post('/tasks',auth, async (request, response)=>{
     }
 })
 
-router.get('/tasks', auth,async (request, response)=>{
+router.post('/tasks/many',auth, async(request,response)=>{
+    const tasks = request.body.map(task=> (
+        new Task({
+            ...task, 
+            author: request.user._id
+        })
+    ));
     try {
-        const tasks = await Task.find({author: request.user._id});
+        tasks.forEach(async (task)=> { await task.save()});
+        response.status(200).send({message: 'Saved!'})
+    } catch (error) {
+        response.status(400).send({error: error.message});
+    }
+})
+
+router.get('/tasks', auth,async (request, response)=>{
+    const { search =undefined, completed = undefined,page = 1, size = 10} = request.query; 
+    const queryFields = { author: request.user._id};
+    search ? queryFields['$text'] = { $search : search } : null,
+    completed ? queryFields['completed'] = completed : null;
+    
+    try {
+        const tasks = await Task.find({
+           ...queryFields
+        }).skip((page-1)*size)
+        .limit(parseInt(size));
         response.status(200).send(tasks);   
     } catch (error) {
         response.status(500).send({error: error.message});
