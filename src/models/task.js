@@ -10,7 +10,9 @@ const mongoose = require('mongoose');
  * populate() enables us to take author and convert from being the _id of author to being the entire profile of that author.
  * This is just syntatical sugar provided by Mongoose which under the hood finds the author by _id, fetches the document and replaces the value of author key from _id to the user document 
  */
-const Task = mongoose.model('tasks',{
+
+let Schema = mongoose.Schema;
+let taskSchema = new Schema({
     description: {
         type: String,
         required: true,
@@ -26,7 +28,10 @@ const Task = mongoose.model('tasks',{
         required: true,
         ref: 'User'
     }
-});
+},{
+    timestamps: true 
+})
 
+const Task = mongoose.model('tasks',taskSchema)
 module.exports = Task;
 

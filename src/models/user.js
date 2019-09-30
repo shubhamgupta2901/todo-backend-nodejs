@@ -46,6 +46,8 @@ let userSchema = new Schema({
             required: true,
         }
     }]
+},{
+    timestamps: true
 })
 
 /**
