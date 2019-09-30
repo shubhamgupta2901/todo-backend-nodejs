@@ -32,17 +32,29 @@ router.post('/tasks/many',auth, async(request,response)=>{
     }
 })
 
+/**
+ * Query parameters allowed: 
+ * completed: boolean
+ * search: query to search tasks
+ * page: page number,
+ * size: number of results in page,
+ * sortBy: the property by which tasks should be sorted. By default ascending sort. Add :desc suffix to sort by descending order. (createdBy:desc)
+ */
 router.get('/tasks', auth,async (request, response)=>{
-    const { search =undefined, completed = undefined,page = 1, size = 10} = request.query; 
-    const queryFields = { author: request.user._id};
-    search ? queryFields['$text'] = { $search : search } : null,
-    completed ? queryFields['completed'] = completed : null;
+    const { search =undefined, completed = undefined,page = 1, size = 10, sortBy=undefined} = request.query; 
     
+    const mongoQuery = {};
+    mongoQuery.author = request.user._id;
+    search ? mongoQuery.$text = { $search : search } : null,
+    completed ? mongoQuery.completed = completed : null;
+
+    const sortParameters = {};
+    if(sortBy){
+        const sortByQuery = sortBy.split(':');
+        sortParameters[sortByQuery[0]] = sortByQuery[1] === 'desc' ? -1 : 1;
+    }
     try {
-        const tasks = await Task.find({
-           ...queryFields
-        }).skip((page-1)*size)
-        .limit(parseInt(size));
+        const tasks = await Task.find(mongoQuery).skip((page-1)*size).limit(parseInt(size)).sort(sortParameters);
         response.status(200).send(tasks);   
     } catch (error) {
         response.status(500).send({error: error.message});
