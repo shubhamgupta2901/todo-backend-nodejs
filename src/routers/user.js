@@ -1,8 +1,13 @@
 const express = require('express');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
+const multer = require('multer');
 const router = new express.Router();
 
+const upload = multer({
+    dest: 'avatar', //name of the folder wher the files should be stored
+
+});
 
 router.post('/users', async (request, response)=> {
     const user = new User(request.body);
@@ -70,6 +75,14 @@ router.get('/users/me',auth,async (request, response)=>{
     } catch (error) {
         response.status(500).send({error: error.message});
     }
+})
+
+/**
+ * argument passed to upload.single is the name of key that user uses to upload file
+ * request.body.key
+ */
+router.post('/users/me/avatar',upload.single('avatar'),(request,response)=>{
+    response.status(200).send({message: 'Successfully uploaded'});
 })
 
 router.patch('/users/me',auth,async (request, response)=>{
