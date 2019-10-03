@@ -1,33 +1,10 @@
 const express = require('express');
 require('./db/mongoose'); // By using require, we ensure that the file db/mongoose.js runs which will ensure that mongoose connects to database.
-const multer = require('multer');
 const UserRouter = require('./routers/user');
 const TaskRouter = require('./routers/task');
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-/**
- * Setting up multer configuration for multipart-requests of file uploads
- */
-const acceptedExtensions = ['jpg', 'png', 'jpeg'];
-const upload = multer({
-    dest: 'images',
-    limits: {
-        fileSize: 1*1024*1024, // takes size in byte. 1MB
-        files: 1
-    },
-    fileFilter: (request, file,callback) =>{
-        isValidExtenstion = acceptedExtensions.some(extension=> file.originalname.endsWith(`.${extension}`));
-        if(isValidExtenstion)
-            return callback(null, true);
-        return callback(`Only ${acceptedExtensions.join(', ')} are allowed.`);
-    }
-})
-
-app.post('/upload', upload.single('upload'),(request, response)=>{
-    response.send();
-})
 
 /**
  * When we set up this line, node will automatically parse the incoming json to an object so we can access it in our request

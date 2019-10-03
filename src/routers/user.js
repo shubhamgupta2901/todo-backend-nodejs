@@ -4,10 +4,6 @@ const auth = require('../middleware/auth');
 const multer = require('multer');
 const router = new express.Router();
 
-const upload = multer({
-    dest: 'avatar', //name of the folder wher the files should be stored
-
-});
 
 router.post('/users', async (request, response)=> {
     const user = new User(request.body);
@@ -76,6 +72,20 @@ router.get('/users/me',auth,async (request, response)=>{
         response.status(500).send({error: error.message});
     }
 })
+
+const acceptedExtensions = ['jpg', 'png', 'jpeg'];
+const upload = multer({
+    dest: 'avatar', //name of the folder wher the files should be stored
+    limits: {
+        fileSize: 1*1024*1024, // takes size in byte. 1MB
+    },
+    fileFilter: (request, file,callback) =>{
+        isValidExtenstion = acceptedExtensions.some(extension=> file.originalname.endsWith(`.${extension}`));
+        if(isValidExtenstion)
+            return callback(null, true);
+        return callback(`Only ${acceptedExtensions.join(', ')} are allowed.`);
+    }
+});
 
 /**
  * argument passed to upload.single is the name of key that user uses to upload file
