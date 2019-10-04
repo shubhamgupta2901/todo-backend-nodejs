@@ -86,7 +86,7 @@ userSchema.methods.generateAuthToken = async function (){
 /**
  * Its important that the method name is toJSON
  * When we pass an object to response.send() in route handlers, express calls JSON.Stringify() to convert objects to string.
- * Whenever we provide a toJSON method to an object, its going to get called whenever an object is going to get stringified by JSON.Stringified.
+ * Whenever we provide a toJSON method to an object, its going to get called whenever an object is going to get stringified by JSON.Stringify().
  * This allows us to manipulate what we want to send by returning an object from toJSON method call.
  * In our case we want to trim out tokens and password from user instances before sending them.
  */

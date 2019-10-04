@@ -65,13 +65,45 @@ router.post('/users/logoutAll', auth, async (request, response)=> {
 
 router.get('/users/me',auth,async (request, response)=>{
     try {
-        const{ name, age, email} = request.user;
-        const loggedInUser = {name, age, email}
-        response.status(200).send(loggedInUser);
+        response.status(200).send(request.user);
     } catch (error) {
         response.status(500).send({error: error.message});
     }
 })
+
+router.patch('/users/me',auth,async (request, response)=>{
+    const allowedUpdateFields = ['name', 'email', 'password', 'age'];
+    const requestedUpdateFields = Object.keys(request.body);
+    const isValidOperation = requestedUpdateFields.every(field=> allowedUpdateFields.includes(field));
+
+    if(!isValidOperation)
+        return response.status(400).send({error: 'Invalid updates'});
+
+    //BUG: When validating operation this way, even after returning response, the execution of method continues and updates the user.
+    // requestedUpdateFields.forEach(field => {
+    //     if(!allowedUpdateFields.includes(field))
+    //         return response.status(400).send({error: `Either Users do not have ${field} field or it can not be updated`});
+    // })
+    try {
+        const user = request.user;
+        requestedUpdateFields.forEach(field => {
+            user[field] = request.body[field];
+        })
+        await user.save();
+        response.status(200).send(user);
+    } catch (error) {
+        response.status(500).send({error: error.message});
+    }
+});
+
+router.delete('/users/me',auth, async (request, response)=>{
+    try {
+        await request.user.remove();
+        response.status(200).send(request.user);
+    } catch (error) {
+        response.status(500).send({error: error.message});
+    }
+});
 
 const acceptedExtensions = ['jpg', 'png', 'jpeg'];
 const upload = multer({
@@ -108,41 +140,18 @@ router.post('/users/me/avatar',auth,upload.single('avatar'),async (request,respo
     }
 },(error, request, response, next)=> {
     response.status(400).send({error: error.message});
-})
+});
 
-router.patch('/users/me',auth,async (request, response)=>{
-    const allowedUpdateFields = ['name', 'email', 'password', 'age'];
-    const requestedUpdateFields = Object.keys(request.body);
-    const isValidOperation = requestedUpdateFields.every(field=> allowedUpdateFields.includes(field));
-
-    if(!isValidOperation)
-        return response.status(400).send({error: 'Invalid updates'});
-
-    //BUG: When validating operation this way, even after returning response, the execution of method continues and updates the user.
-    // requestedUpdateFields.forEach(field => {
-    //     if(!allowedUpdateFields.includes(field))
-    //         return response.status(400).send({error: `Either Users do not have ${field} field or it can not be updated`});
-    // })
+router.delete('/users/me/avatar', auth, async (request, response)=> {
     try {
         const user = request.user;
-        requestedUpdateFields.forEach(field => {
-            user[field] = request.body[field];
-        })
+        user.avatar = undefined;
         await user.save();
-        response.status(200).send(user);
+        response.status(200).send({message: 'Successfully deleted image.'});
     } catch (error) {
-        response.status(500).send({error: error.message});
+        response.status(400).send({error: error.message});
     }
-})
-
-router.delete('/users/me',auth, async (request, response)=>{
-    try {
-        await request.user.remove();
-        response.status(200).send(request.user);
-    } catch (error) {
-        response.status(500).send({error: error.message});
-    }
-})
+});
 
 
 module.exports = router;
