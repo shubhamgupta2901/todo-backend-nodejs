@@ -4,7 +4,7 @@ const UserRouter = require('./routers/user');
 const TaskRouter = require('./routers/task');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 /**
  * When we set up this line, node will automatically parse the incoming json to an object so we can access it in our request
