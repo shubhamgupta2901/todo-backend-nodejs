@@ -153,5 +153,18 @@ router.delete('/users/me/avatar', auth, async (request, response)=> {
     }
 });
 
+router.get('/users/:id/avatar',async (request, response)=>{
+    try {
+        const user = await User.findById(request.params.id);
+        if(!user || !user.avatar){
+            throw new Error('Either the avatar is not present or invalid user id.')
+        }
+        response.set('Content-Type','image/png');
+        response.send(user.avatar);
+    } catch (error) {
+        response.status(404).send({error: error.message})
+    }
+});
+
 
 module.exports = router;
