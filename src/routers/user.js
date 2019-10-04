@@ -88,11 +88,21 @@ const upload = multer({
 });
 
 /**
+ * Note we are passing the auth middleware before the multer middleware. 
+ * Auth middleware checks weather the auth token is valid. 
+ * Only after that we worry about upload operation, so we use multer middleware after this.
+ * Multer middleware checks weather the file size and file extension are valid.
  * argument passed to upload.single is the name of key that user uses to upload file
  * request.body.key
+ * 
+ * The last function written is to catch the error thrown by multer middleware functions and send response to user.
+ * Its imperative that we specify all four arguments.
  */
-router.post('/users/me/avatar',upload.single('avatar'),(request,response)=>{
-    response.send();
+router.post('/users/me/avatar',auth,upload.single('avatar'),(request,response)=>{
+    if(!request.file){
+        return response.status(400).send({error: 'Missing file'});
+    }
+    response.status(200).send({response: 'Successful upload'});
 },(error, request, response, next)=> {
     response.status(400).send({error: error.message});
 })
