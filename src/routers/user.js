@@ -83,7 +83,7 @@ const upload = multer({
         isValidExtenstion = acceptedExtensions.some(extension=> file.originalname.endsWith(`.${extension}`));
         if(isValidExtenstion)
             return callback(null, true);
-        return callback(`Only ${acceptedExtensions.join(', ')} are allowed.`);
+        return callback(new Error(`Only ${acceptedExtensions.join(', ')} are allowed.`));
     }
 });
 
@@ -92,7 +92,9 @@ const upload = multer({
  * request.body.key
  */
 router.post('/users/me/avatar',upload.single('avatar'),(request,response)=>{
-    response.status(200).send({message: 'Successfully uploaded'});
+    response.send();
+},(error, request, response, next)=> {
+    response.status(400).send({error: error.message});
 })
 
 router.patch('/users/me',auth,async (request, response)=>{
