@@ -40,6 +40,9 @@ let userSchema = new Schema({
             return true;
         }
     }, 
+    avatar: {
+        type: Buffer //store the image in binary format 
+    },
     tokens: [{
         token: {
             type: String,

@@ -75,7 +75,6 @@ router.get('/users/me',auth,async (request, response)=>{
 
 const acceptedExtensions = ['jpg', 'png', 'jpeg'];
 const upload = multer({
-    dest: 'avatar', //name of the folder wher the files should be stored
     limits: {
         fileSize: 1*1024*1024, // takes size in byte. 1MB
     },
@@ -98,11 +97,15 @@ const upload = multer({
  * The last function written is to catch the error thrown by multer middleware functions and send response to user.
  * Its imperative that we specify all four arguments.
  */
-router.post('/users/me/avatar',auth,upload.single('avatar'),(request,response)=>{
-    if(!request.file){
-        return response.status(400).send({error: 'Missing file'});
+router.post('/users/me/avatar',auth,upload.single('avatar'),async (request,response)=>{
+    try {
+        const user = request.user;
+        user.avatar = request.file.buffer;
+        await user.save();
+        response.status(200).send(user);
+    } catch (error) {
+        return response.status(400).send({error: error.message});
     }
-    response.status(200).send({response: 'Successful upload'});
 },(error, request, response, next)=> {
     response.status(400).send({error: error.message});
 })
