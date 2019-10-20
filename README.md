@@ -33,8 +33,8 @@ MONGODB_URL= <YOUR_MONGODB_URL>/<YOUR_DB_NAME>
 JWT_SECRET=<YOUR_AUTH_SECRET> 
 ```
 * These keys are:
-  * PORT: Port on which you want the local server to run. (Generally 3000)
-  * MONGODB_URL: By default mongodb runs at localhost: mongodb://127.0.0.1:27017/
+  * PORT: Port on which you want the local server to run. (Generally ```3000```)
+  * MONGODB_URL: By default mongodb runs at localhost: ```mongodb://127.0.0.1:27017/```
   * JWT_SECRET: The secret string you want to use to generate json-web-tokens. Read more [here](https://jwt.io/introduction/).
 * Run ```npm install``` to install dependencies and devDependencies.
 * Run ```npm run dev```.
